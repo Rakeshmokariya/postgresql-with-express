@@ -7,7 +7,7 @@ const { verifyToken } = require("../middlewares/users.middleware");
 const { login, signup } = authController;
 
 router.get("/", verifyToken, userController.get);
-router.get("/:id", userController.getById);
+router.get("/:id", verifyToken, userController.getById);
 router.post("/", userController.createUser);
 router.put("/:id", userController.updateUser);
 router.delete("/:id", userController.deleteUser);

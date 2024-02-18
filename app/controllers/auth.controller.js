@@ -7,7 +7,6 @@ const env = process.env;
 const User = db.users;
 
 const signup = async (req, res) => {
-  console.log(req.body);
   try {
     const { name, email, password } = req.body;
     const data = {
@@ -23,12 +22,10 @@ const signup = async (req, res) => {
     // set cookie with the token generated
     if (user) {
       let token = jwt.sign({ id: user.id }, env.JWT_SECRET, {
-        expiresIn: 1 * 24 * 60 * 60 * 1000,
+        expiresIn: "1800s",
       });
 
       res.cookie("jwt", token, { maxAge: 1 * 24 * 60 * 60, httpOnly: true });
-      console.log("user", JSON.stringify(user, null, 2));
-      console.log(token);
       return res.status(201).send(user);
     } else {
       return res.status(409).send("Details are not correct");
@@ -41,9 +38,6 @@ const signup = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-
-    console.log("===============================");
-    console.log("env.JWT_SECRET:", env.JWT_SECRET);
 
     //find a user by their email
     const user = await User.findOne({
@@ -67,15 +61,12 @@ const login = async (req, res) => {
             expiresIn: 1 * 24 * 60 * 60 * 1000,
           }
         );
-        console.log("Token:", token);
-
         res.cookie("jwt", token, {
           maxAge: 1 * 24 * 60 * 60 * 1000,
           httpOnly: true,
           secure: true,
         });
         console.log("user", JSON.stringify(user, null, 2));
-        console.log(token);
         return res.status(201).send({ token: token });
       } else {
         return res.status(401).send("Authentication failed");
